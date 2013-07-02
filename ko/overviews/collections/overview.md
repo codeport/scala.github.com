@@ -1,21 +1,20 @@
 ---
 layout: overview-large
-title: Mutable and Immutable Collections
+title: 가변성 컬렉션과 불변성 컬렉션
 
 disqus: true
 
 partof: collections
 num: 2
-languages: [ja, ko]
+language: ko
 ---
 
-Scala collections systematically distinguish between mutable and
-immutable collections. A _mutable_ collection can be updated or
-extended in place. This means you can change, add, or remove elements
-of a collection as a side effect. _Immutable_ collections, by
-contrast, never change. You have still operations that simulate
-additions, removals, or updates, but those operations will in each
-case return a new collection and leave the old collection unchanged.
+스칼라 컬렉션에서는 불변성(immutable)인 컬렉션과 가변성(mutable)인 컬렉션을 
+체계적으로 구분한다. _가변(mutable)_ 컬렉션은 변경하거나 확장이 가능하다. 즉, 
+부작용을 통해 원소를 변경하거나 추가하거나 삭제할 수 있다. 반대로 _불변(immutable)_ 
+컬렉션은 결코 변화되지 않는다. 원소 삭제, 추가, 변경을 모방하는 연산이 있긴 하지만, 
+그런 경우 새로운 컬렉션이 반환될 뿐 원래의 컬렉션은 변하지 않는다.
+
 
 All collection classes are found in the package `scala.collection` or
 one of its sub-packages `mutable`, `immutable`, and `generic`.  Most
@@ -140,3 +139,4 @@ This behavior which is implemented everywhere in the collections libraries is ca
 Most of the classes in the collections hierarchy exist in three variants: root, mutable, and immutable. The only exception is the Buffer trait which only exists as a mutable collection.
 
 In the following, we will review these classes one by one.
+

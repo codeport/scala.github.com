@@ -1,50 +1,49 @@
 ---
 layout: overview-large
-title: Concrete Immutable Collection Classes
+title: 변경 불가능한 컬렉션에 속하는 구체적인 클래스들
 
 disqus: true
 
 partof: collections
 num: 8
-languages: [ja, ko]
+language: ko
 ---
 
-Scala provides many concrete immutable collection classes for you to choose from. They differ in the traits they implement (maps, sets, sequences), whether they can be infinite, and the speed of various operations. Here are some of the most common immutable collection types used in Scala.
+스칼라에는 필요에 따라 선택 가능한 구체적인 선택 불가능 컬렉션 클래스가 많이 있다. 각각의 차이는 어떤 트레잇을 구현하고 있는가(맵, 집합, 열), 무한한가 유한한가, 각각의 연산의 수행 시간(복잡도) 등에 있다. 여기서는 스칼라에서 가장 많이 사용되는 변경 불가능한 컬렉션 타입들을 설명할 것이다.
 
-## Lists
+## 리스트(List)
 
-A [List](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/List.html) is a finite immutable sequence. They provide constant-time access to their first element as well as the rest of the list, and they have a constant-time cons operation for adding a new element to the front of the list. Many other operations take linear time.
+[List(리스트)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/List.html)는 유한한 변경 불가능한 열이다. 리스트의 첫 원소를 가져오거나, 첫 원소를 제외한 나머지를 가져오는 연산에는 상수 시간이 걸린다. 또한 새 원소를 리스트 맨 앞에 붙이는(보통 콘스cons라 부름) 연산도 상수시간이 소요된다. 다른 연산들은 보통 선형 시간(즉, 리스트의 길이 N에 비례)이 걸린다.
 
-Lists have always been the workhorse for Scala programming, so not much needs to be said about them here. The major change in 2.8 is that the `List` class together with its subclass `::` and its subobject `Nil` is now defined in package `scala.collection.immutable`, where it logically belongs. There are still aliases for `List`, `Nil`, and `::` in the `scala` package, so from a user perspective, lists can be accessed as before.
+리스트는 계속해서 스칼라 프로그래밍시 사용하는 주요 데이터 구조였다. 따라서 여기서 다시 자세히 설명할 필요는 없을 것이다. 2.8에서 가장 큰 변화는 `List` 클래스, 그리고 그 하위 클래스인 `::`와 하위 객체 `Nil`이 이제는 논리적인 위치에 맞게 `scala.collection.immutable` 패키지에 들어가 있다는 점이다. 여전히 `scala` 패키지에도 타입 별칭 `List`, `Nil`, `::`가 존재한다. 따라서 사용자 관점에서 볼때는 예전에 사용하던 방식대로 계속 사용 가능하다.
 
-Another change is that lists now integrate more closely into the collections framework, and are less of a special case than before. For instance all of the numerous methods that originally lived in the `List` companion object have been deprecated. They are replaced by the [uniform creation methods]({{ site.baseurl }}/overviews/collections/creating-collections-from-scratch.html) inherited by every collection.
+또 다른 변화는 이제 리스트도 컬렉션 프레임워크에 더 밀접하게 통합되어 있따는 점이다. 따라서 이전보다 덜 특별하게 취급된다. 예를 들어 원래는 `List` 짝 객체에 존재하던 여러 연산이 이제는 사용하지 않도록 표시되었다. 이러한 연산들은 모든 컬렉션이 상속하는 [일정한 생성 메소드들]({{ site.baseurl }}/overviews/collections/creating-collections-from-scratch.html)로 대치되었다.
 
-## Streams
+## 스트림
 
-A [Stream](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Stream.html) is like a list except that its elements are computed lazily. Because of this, a stream can be infinitely long. Only those elements requested are computed. Otherwise, streams have the same performance characteristics as lists.
-
-Whereas lists are constructed with the `::` operator, streams are constructed with the similar-looking `#::`. Here is a simple example of a stream containing the integers 1, 2, and 3:
+[Stream(스트림)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Stream.html)은 리스트와 같지만 각 원소가 지연계산된다는 점에서 차이가 있다. 따라서 무한한 스트림도 가능하다. 요청을 받을 때만 원소를 계산한다. 그 점을 제외하면 나머지 동작 특성은 리스트와 같다.
+리스트가 `::` 연산으로 구성되는 반면, 스트림은 비슷한 `#::`로 구성된다. 다음은 정수 1, 2, 3을 포함하는 스트림을 만드는 과정을 보여준다. 
 
     scala> val str = 1 #:: 2 #:: 3 #:: Stream.empty
     str: scala.collection.immutable.Stream[Int] = Stream(1, ?)
 
-The head of this stream is 1, and the tail of it has 2 and 3. The tail is not printed here, though, because it hasn't been computed yet! Streams are specified to compute lazily, and the `toString` method of a stream is careful not to force any extra evaluation.
+이 스트림의 머리는 1이고, 꼬리는 2와 3이다. 꼬리는 출력이 되지 않는다. 왜냐하면 아직 그 값을 계산하지 않았기 때문이다! 스트림은 지연계산을 위한 것이기 때문에, 스트림의 `toString` 메소드는 추가 계산을 수행하지 않게 조심하도록 구현되어 있다.
 
-Below is a more complex example. It computes a stream that contains a Fibonacci sequence starting with the given two numbers. A Fibonacci sequence is one where each element is the sum of the previous two elements in the series.
-
+다음은 좀 더 복잡한 예제이다. 이 예에서는 주어진 두 정수로 시작하는 피보나치 수열의 스트림을 계산한다. 피보나치 수열은 각 원소가 바로 이전 두 원소의 합인 수열이다. 
 
     scala> def fibFrom(a: Int, b: Int): Stream[Int] = a #:: fibFrom(b, a + b)
     fibFrom: (a: Int,b: Int)Stream[Int]
 
-This function is deceptively simple. The first element of the sequence is clearly `a`, and the rest of the sequence is the Fibonacci sequence starting with `b` followed by `a + b`. The tricky part is computing this sequence without causing an infinite recursion. If the function used `::` instead of `#::`, then every call to the function would result in another call, thus causing an infinite recursion. Since it uses `#::`, though, the right-hand side is not evaluated until it is requested.
-Here are the first few elements of the Fibonacci sequence starting with two ones:
+이 함수는 믿을 수 없이 간단하다. 열의 첫번째 원소는 분명 `a`이고, 나머지 열은 `b` 다음에 `a + b`가 오는 피보나치 수열이다. 교묘한 부분은 이 열을 계산할 때 무한한 재귀호출을 하지 않는다는 점이다. `::`를 `#::` 대신 사용했다면 함수 호출이 자기 자신을 호출하게 되어서 무한 재귀 호출이 발생했을 것이다. 하지만 `#::`를 사용하기 때문에 우항은 요청되기 전까지 계산되지 않는다.
+
+다음은 1을 두개 사용해 생성되는 피보나치 수열의 앞 부분 항을 몇 개 보여준다.
 
     scala> val fibs = fibFrom(1, 1).take(7)
     fibs: scala.collection.immutable.Stream[Int] = Stream(1, ?)
     scala> fibs.toList
     res9: List[Int] = List(1, 1, 2, 3, 5, 8, 13)
 
-## Vectors
+## 벡터
 
 Lists are very efficient when the algorithm processing them is careful to only process their heads. Accessing, adding, and removing the head of a list takes only constant time, whereas accessing or modifying elements later in the list takes time linear in the depth into the list.
 
