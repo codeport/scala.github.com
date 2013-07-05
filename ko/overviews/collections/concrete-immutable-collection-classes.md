@@ -45,11 +45,11 @@ language: ko
 
 ## 벡터
 
-Lists are very efficient when the algorithm processing them is careful to only process their heads. Accessing, adding, and removing the head of a list takes only constant time, whereas accessing or modifying elements later in the list takes time linear in the depth into the list.
+리스트는 그것을 다루는 알고리즘이 목록의 첫 원소만을 처리하도록 주의깊게 고안되어 있는 경우에는 아주 효율적이다. 리스트의 첫 원소를 억세스하고, 추가하고, 삭제하는 작업은 상수 시간만 걸리지만, 그외 다른 곳에 위치한 원소를 억세스하거나 변경하는 작업은 리스트의 길이에 정비례하는 시간이 걸린다.
 
-[Vector](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Vector.html) is a collection type (introduced in Scala 2.8) that addresses the inefficiency for random access on lists. Vectors allow accessing any element of the list in "effectively" constant time. It's a larger constant than for access to the head of a list or for reading an element of an array, but it's a constant nonetheless. As a result, algorithms using vectors do not have to be careful about accessing just the head of the sequence. They can access and modify elements at arbitrary locations, and thus they can be much more convenient to write.
+[Vector(벡터)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Vector.html)는 임의 접근시 성능이 떨어지는 리스트의 문제점을 해결한 컬렉션 유형이다(스칼라 2.8에 도입됨). 벡터에 속한 어떤 원소이건 "실질적으로" 상수 시간에 억세스할 수 있다. 상수 자체는 리스트의 첫 원소를 가져오는 것이나 배열의 원소를 읽는 시간보다는 더 큰 편이다. 하지만, 여전히 상수시간은 상수시간이다. 따라서 벡터를 사용하는 알고리즘에서는 열의 첫 원소만을 처리하도록 조심할 필요가 없다. 원한다면 어떤 위치에 있는 원소이던지 억세스하거나 변경할 수 있다. 따라서 훨씬 사용하기에 편리하다. 
 
-Vectors are built and modified just like any other sequence.
+벡터도 다른 열 객체들과 마찬가지로 생성하고 변경할 수 있다.
 
     scala> val vec = scala.collection.immutable.Vector.empty
     vec: scala.collection.immutable.Vector[Nothing] = Vector()
@@ -60,9 +60,9 @@ Vectors are built and modified just like any other sequence.
     scala> vec3(0)
     res1: Int = 100
 
-Vectors are represented as trees with a high branching factor (The branching factor of a tree or a graph is the number of children at each node). Every tree node contains up to 32 elements of the vector or contains up to 32 other tree nodes. Vectors with up to 32 elements can be represented in a single node. Vectors with up to `32 * 32 = 1024` elements can be represented with a single indirection. Two hops from the root of the tree to the final element node are sufficient for vectors with up to 2<sup>15</sup> elements, three hops for vectors with 2<sup>20</sup>, four hops for vectors with 2<sup>25</sup> elements and five hops for vectors with up to 2<sup>30</sup> elements. So for all vectors of reasonable size, an element selection involves up to 5 primitive array selections. This is what we meant when we wrote that element access is "effectively constant time".
+벡터는 분기계수(branching factor)가 큰 트리로 표현된다(트리나 그래프에서 분기계수란 각 노드가 가질 수 있는 자식의 갯수를 의미한다). 모든 트리 노드는 최대 32개의 벡터 원소를 가지거나, 32개의 다른 트리 노드를 포함할 수 있다. 32개 이하의 원소를 가지는 벡터는 노드 하나로 표현할 수 있다. `32 * 32 = 1024`개 까지의 원소는 단 한번만 간접참조를 거치면 된다. 트리 루트에서 두 단계를 거치면 최대 2<sup>15</sup> 원소를 지원할 수 있고, 3 단계는 2<sup>20</sup>, 네 단계는 2<sup>25</sup>개의 원소, 다섯 단계를 거치는 경우에는 2<sup>30</sup>개 까지 가능하다. 따라서 적당한 범위내의 크기를 가지는 벡터라면 최대 5번의 원시 배열 선택을 거치면 모두 처리할 수 있다. 앞에서 "실질적"이라는 말로 원소 억세스에 대해 설명했던 이유가 바로 이것이다.
 
-Vectors are immutable, so you cannot change an element of a vector and still retain a new vector. However, with the `updated` method you can crate a new vector that differs from a given vector only in a single element:
+벡터는 변경 불가능하다. 따라서 벡터의 원소를 변경할 수 없다. 하지만 `updated` 메소드를 사용하면 기존 벡터와 요소 하나만 차이가 나는 새 벡터를 만들 수 있다.
 
     scala> val vec = Vector(1, 2, 3)
     vec: scala.collection.immutable.Vector[Int] = Vector(1, 2, 3)
@@ -71,19 +71,18 @@ Vectors are immutable, so you cannot change an element of a vector and still ret
     scala> vec
     res1: scala.collection.immutable.Vector[Int] = Vector(1, 2, 3)
 
-As the last line above shows, a call to `updated` has no effect on the original vector `vec`. Like selection, functional vector updates are also "effectively constant time". Updating an element in the middle of a vector can be done by copying the node that contains the element, and every node that points to it, starting from the root of the tree. This means that a functional update creates between one and five nodes that each contain up to 32 elements or subtrees. This is certainly more expensive than an in-place update in a mutable array, but still a lot cheaper than copying the whole vector.
+마지막 줄에서 보듯, `updated`를 호출해도 원래의 벡터 `vec`은 변화가 없다. 원소 억세스시와 마찬가지로 함수형 벡터 변경도 또한 "실질적으로는 상수 시간"에 수행된다. 벡터의 중간에 있는 원소를 변경 하려면 그 원소를 포함하고 있는 노드와 루트에서 해당 노드에 도달하는 경로에 있는 모든 선조 노드들도 복사하는 방식으로 이루어진다. 따라서 함수형으로 변경하는 경우에 최대 5개의 노드를 복사/생성해야 함을 의미한다. 이때 각 노드는 32개의 원소를 포함하거나, 최대 32개까지 다른 하위 트리에 대한 참조를 저장하게 된다. 물론 변경 가능한 배열에서 직접 변경하는 것보다는 확실히 더 비용이 비싸다. 하지만 전체 벡터를 복사하는 것과 비교하면 훨씬 적은 비용이 든다.
 
-Because vectors strike a good balance between fast random selections and fast random functional updates, they are currently the default implementation of immutable indexed sequences:
-
+벡터는 빠른 임의 선택과 빠른 임의의 함수적 변경 사이의 균형을 잘 잡고 있다. 따라서 첨자가 있는 열(immutable.IndexedSeq) 트레잇의 기본 구현은 벡터로 되어 있다.
 
     scala> collection.immutable.IndexedSeq(1, 2, 3)
     res2: scala.collection.immutable.IndexedSeq[Int] = Vector(1, 2, 3)
 
-## Immutable stacks
+## 변경 불가능한 스택
 
-If you need a last-in-first-out sequence, you can use a [Stack](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Stack.html). You push an element onto a stack with `push`, pop an element with `pop`, and peek at the top of the stack without removing it with `top`. All of these operations are constant time.
+후입선출(LIFO, 나중에 넣은게 처음 나오는) 열이 필요하다면 [Stack(스택)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Stack.html)이 있다. 스택 위에 원소를 넣을 때는 `push`를 쓰고, 스택의 맨 위 원소를 꺼내올 때는 `pop`을 쓴다. 또한 스택의 맨 위에 있는 원소를 꺼내지 않고 확인만 하고 싶다면 `top`을 사용하면 된다. 이 세 연산은 모두 상수 시간이 소요된다.
 
-Here are some simple operations performed on a stack:
+다음 예는 스택에 대해 간단한 연산을 수행하는 것을 보여준다.
 
 
     scala> val stack = scala.collection.immutable.Stack.empty
@@ -97,39 +96,39 @@ Here are some simple operations performed on a stack:
     scala> hasOne.pop
     res19: scala.collection.immutable.Stack[Int] = Stack()
 
-Immutable stacks are used rarely in Scala programs because their functionality is subsumed by lists: A `push` on an immutable stack is the same as a `::` on a list and a `pop` on a stack is the same a `tail` on a list.
+변경 불가능한 스택은 스칼라에서 거의 사용되지 않는다. 왜냐하면 리스트가 스택의 모든 역할을 다 할 수 있기 때문이다. 변경 불가능한 스택에 `push`하는 것은 리스트에 `::` 하는 것과 같고, `pop`은 리스트에 `tail`을 하는 것과 같다.
 
-## Immutable Queues
+## 변경 불가능한 큐
 
-A [Queue](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Queue.html) is just like a stack except that it is first-in-first-out rather than last-in-first-out.
+[Queue(큐)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Queue.html)는 스택과 비슷하지만 후입선출이 아니고 선입선출(FIFO,처음 넣은 것이 처음 나오는)이라는 점이 다르다.
 
-Here's how you can create an empty immutable queue:
+다음은 변경 불가능한 빈 큐를 생성하는 것을 보여준다.
 
     scala> val empty = scala.collection.immutable.Queue[Int]()
     empty: scala.collection.immutable.Queue[Int] = Queue()
 
-You can append an element to an immutable queue with `enqueue`:
+`enqueue`를 사용해 변경 불가능한 큐에 원소를 추가할 수 있다.
 
     scala> val has1 = empty.enqueue(1)
     has1: scala.collection.immutable.Queue[Int] = Queue(1)
 
-To append multiple elements to a queue, call `enqueue` with a collection as its argument:
+여러 원소를 큐에 추가하려면 `enqueue` 호출시 컬렉션을 인자로 넘기면 된다.
 
     scala> val has123 = has1.enqueue(List(2, 3))
     has123: scala.collection.immutable.Queue[Int]
       = Queue(1, 2, 3)
 
-To remove an element from the head of the queue, you use `dequeue`:
+큐의 맨 앞에서 원소를 제거하기 위해서는 `dequeue`를 사용하라.
 
     scala> val (element, has23) = has123.dequeue
     element: Int = 1
     has23: scala.collection.immutable.Queue[Int] = Queue(2, 3)
 
-Note that `dequeue` returns a pair consisting of the element removed and the rest of the queue.
+`dequeue`가 반환하는 것이 제거된 맨 앞의 원소와 그 원소를 제외한 나머지 큐의 튜플이라는 사실에 주의하라.
 
-## Ranges
+## 범위(Range)
 
-A [Range](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Range.html) is an ordered sequence of integers that are equally spaced apart. For example, "1, 2, 3," is a range, as is "5, 8, 11, 14." To create a range in Scala, use the predefined methods `to` and `by`.
+[Range(범위)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/Range.html)는 동일한 간격으로 떨어진 정수들의 순서가 있는 열이다. 예를 들어 "1, 2, 3"이나 "5, 8, 11, 14" 등이 범위이다. 스칼라에서 범위를 만들 때에는 미리 정의된 `to`와 `by` 메소드를 사용한다.
 
     scala> 1 to 3
     res2: scala.collection.immutable.Range.Inclusive
@@ -137,41 +136,37 @@ A [Range](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collectio
     scala> 5 to 14 by 3
     res3: scala.collection.immutable.Range = Range(5, 8, 11, 14)
 
-If you want to create a range that is exclusive of its upper limit, then use the convenience method `until` instead of `to`:
+상한값을 제외한 나머지만 포함한 범위를 만들고 싶다면 `to`대신에 `until` 메소드를 사용하면 된다.
 
     scala> 1 until 3
     res2: scala.collection.immutable.Range.Inclusive
       with scala.collection.immutable.Range.ByOne = Range(1, 2)
 
-Ranges are represented in constant space, because they can be defined by just three numbers: their start, their end, and the stepping value. Because of this representation, most operations on ranges are extremely fast.
+범위는 하한값, 상한값, 그리고 증가값의 세 값으로 표현 가능하기 때문에 상수 공간 복잡도를 가진다. 이런 표현방식을 사용하기 때문에 범위에 대한 연산은 매우 빠르다.
 
-## Hash Tries
+## 해시 트라이(hash trie)
 
-Hash tries are a standard way to implement immutable sets and maps efficiently. They are supported by class [immutable.HashMap](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/HashMap.html). Their representation is similar to vectors in that they are also trees where every node has 32 elements or 32 subtrees. But the selection of these keys is now done based on hash code. For instance, to find a given key in a map, one first takes the hash code of the key. Then, the lowest 5 bits of the hash code are used to select the first subtree, followed by the next 5 bits and so on. The selection stops once all elements stored in a node have hash codes that differ from each other in the bits that are selected up to this level.
+해시 트라이는 변경 불가능한 집합과 맵을 효율적으로 구현하기 위해 쓰이는 표준적인 방법이다. 이들은 [immutable.HashMap](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/HashMap.html) 클래스가 지원한다. 해시 트라이의 구조는 벡터와 비슷하다. 해시 트라이는 각 노드가 32개의 원소나 하위 트리를 가지는 트리로 표현된다. 하지만 키의 선택이 해시 값에 기반해 이루어진다는 점이 다르다. 예를 들어 맵에서 어떤 키를 찾기 위해서는 해당 키의 해시값을 먼저 계산해야 한다. 그리고 나서 해시코드의 최하위 5비트를 사용해 첫번째 하위 트리를 찾고, 나머지 5비트를 사용해 그 다음 하위 트리를 찾는 식으로 탐색을 수행한다. 탐색 과정은 노드에 저장된 모든 해시 코드가 서로 다른 시점에 종료된다. 
+해시 트라이는 충분히 빠른 검색과 충분히 효율적인 함수적 추가(`+`) 및 삭제(`-`) 사이에 잘 균형잡힌 구현을 제공한다. 그런 이유로 스칼라에서는 변경 불가능한 맵과 집합에 해시 트라이를 기본 구현으로 사용한다. 실제로는 원소가 5개 미만인 변경 불가능한 맵과 집합에 대해서는 조금 더 최적화를 한다. 원소가 1개에서 4개 사이인 집합과 맵은 해당 원소들(맵의 경우 키/값 쌍들)만을 필드로 포함하는 단일 객체로 표현된다. 빈 변경 불가능한 집합이나 맵은 각각 유일한 객체로 표현된다. 변경 불가능한 빈 집합이나 맵은 항상 비어있는 채이기 때문에 객체를 중복해 만들 필요가 없다.
 
-Hash tries strike a nice balance between reasonably fast lookups and reasonably efficient functional insertions (`+`) and deletions (`-`). That's why they underly Scala's default implementations of immutable maps and sets. In fact, Scala has a further optimization for immutable sets and maps that contain less than five elements. Sets and maps with one to four elements are stored as single objects that just contain the elements (or key/value pairs in the case of a map) as fields. The empty immutable set and the empty immutable map is in each case a single object - there's no need to duplicate storage for those because and empty immutable set or map will always stay empty.
 
-## Red-Black Trees
+## 적-흑 트리(Red-Black Tree)
 
-Red-black trees are a form of balanced binary trees where some nodes are designated "red" and others designated "black." Like any balanced binary tree, operations on them reliably complete in time logarithmic to the size of the tree.
-
-Scala provides implementations of immutable sets and maps that use a red-black tree internally. Access them under the names [TreeSet](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/TreeSet.html) and [TreeMap](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/TreeMap.html).
-
+적흑트리는 균형트리의 일종으로, 일부 노드는 "빨간색", 나머지는 "검은색"으로 지정될 수 있다. 다른 모든 균형 트리와 마찬가지로 트리에 대한 연산은 트리 크기의 로그(log, 대수)에 비례한 시간 복잡도를 가진다.
+스칼라는 내부적으로 적흑트리를 사용하는 변경 불가능한 집합과 맵을 제공한다. [TreeSet](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/TreeSet.html)과 [TreeMap](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/TreeMap.html)이라는 이름으로 이를 사용할 수 있다.
 
     scala> scala.collection.immutable.TreeSet.empty[Int]
     res11: scala.collection.immutable.TreeSet[Int] = TreeSet()
     scala> res11 + 1 + 3 + 3
     res12: scala.collection.immutable.TreeSet[Int] = TreeSet(1, 3)
 
-Red black trees are the standard implementation of `SortedSet` in Scala, because they provide an efficient iterator that returns all elements in sorted order.
+적흑트리는 스칼라의 `SortedSet` 집합의 기본 구현이다. 이유는 적흑트리를 사용하면 모든 원소를 정렬된 순서로 반환하는 반복자를 효율적으로 제공할 수 있기 때문이다.
 
-## Immutable BitSets
+## 변경 불가능한 비트 집합
 
-A [BitSet](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/BitSet.html) represents a collection of small integers as the bits of a larger integer. For example, the bit set containing 3, 2, and 0 would be represented as the integer 1101 in binary, which is 13 in decimal.
-
-Internally, bit sets use an array of 64-bit `Long`s. The first `Long` in the array is for integers 0 through 63, the second is for 64 through 127, and so on. Thus, bit sets are very compact so long as the largest integer in the set is less than a few hundred or so.
-
-Operations on bit sets are very fast. Testing for inclusion takes constant time. Adding an item to the set takes time proportional to the number of `Long`s in the bit set's array, which is typically a small number. Here are some simple examples of the use of a bit set:
+[BitSet(비트집합)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/BitSet.html)은 작은 정수의 컬렉션을 큰 정수의 비트들로 표현한 것이다. 예를 들어 3, 2, 0을 포함하는 비트집합은 2진수로 1101, 즉 10진수 13으로 표현할 수 있다.
+내부적으로 비트집합은 64비트 `Long` 배열을 사용한다. 배열의 최초의 `Long`은 0부터 63, 두번째는 64부터 127, 이런 식으로 사용한다. 따라서 집합에서 가장 큰 수가 몇백 정도인 경우라면 비트 집합은 메모리를 아주 작게 차지한다. 
+비트 집합에 대한 연산은 아주 빠르다. 원소가 속해있는지 판단하는 것은 상수시간이 걸린다. 집합에 원소를 추가하는 것은 내부에 있는 배열의 `Long` 갯수에 비례하지만, 보통 그 갯수가 그리 크지는 않다. 다음은 비트 집합을 사용하는 예를 간단히 보여준다.
 
     scala> val bits = scala.collection.immutable.BitSet.empty
     bits: scala.collection.immutable.BitSet = BitSet()
@@ -182,9 +177,9 @@ Operations on bit sets are very fast. Testing for inclusion takes constant time.
     scala> moreBits(0)
     res27: Boolean = false
 
-## List Maps
+## 리스트 맵
 
-A [ListMap](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/ListMap.html) represents a map as a linked list of key-value pairs. In general, operations on a list map might have to iterate through the entire list. Thus, operations on a list map take time linear in the size of the map. In fact there is little usage for list maps in Scala because standard immutable maps are almost always faster. The only possible difference is if the map is for some reason constructed in such a way that the first elements in the list are selected much more often than the other elements.
+[ListMap(리스트맵)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/collection/immutable/ListMap.html)은 맵을 키-값 쌍의 연결된 리스트로 표현한다. 일반적으로 리스트맵에 대한 연산을 하려면 전체 리스트를 순회해야 한다. 따라서 리스트 맵에 대한 연산은 맵 크기에 대해 선형 시간이 필요하다. 스칼라에서 리스트맵을 사용하는 경우는 흔치 않다. 왜냐하면 표준적인 변경 불가능한 맵이 거의 대부분 더 빠르기 때문이다. 성능상 리스트맵이 더 유리할 수 있는 경우가 있다면, 어떤 이유로든 맵의 첫 원소가 다른 원소들보다 훨씬 더 자주 선택되어야 하는 경우일 것이다.
 
     scala> val map = scala.collection.immutable.ListMap(1->"one", 2->"two")
     map: scala.collection.immutable.ListMap[Int,java.lang.String] = 

@@ -1,6 +1,6 @@
 ---
 layout: overview-large
-title: Views
+title: 뷰
 
 disqus: true
 
@@ -9,20 +9,21 @@ num: 14
 language: ko
 ---
 
-Collections have quite a few methods that construct new collections. Examples are `map`, `filter` or `++`. We call such methods transformers because they take at least one collection as their receiver object and produce another collection in their result.
+컬렉션에는 새로운 컬렉션을 만들기 위한 메소드가 꽤 들어 있다. 예를 들면 `map`, `filter`, `++` 등이 그렇다. 이러한 메소드를 변환메소드(transformer)라 부르는데, 이유는 최소 하나 이상의 컬렉션을 수신객체로 받아서 결과값으로 다른 컬렉션을 만들어내기 때문이다.
 
-There are two principal ways to implement transformers. One is _strict_, that is a new collection with all its elements is constructed as a result of the transformer. The other is non-strict or _lazy_, that is one constructs only a proxy for the result collection, and its elements get constructed only as one demands them.
+변환메소드를 구현하는 방법은 크게 두가지가 있다. 하나는 _바로 계산하기(strict)_ 방식이다. 이는 변환 메소드에서 새로 만들어지는 컬렉션에 모든 원소를 만들어서 집어넣어서 반환하는 방식이다. 또 다른 방식은 바로 계산하지 않기(non-strict) 또는 _지연 계산하기(lazy)_ 방식이다. 이는 결과 컬렉션 전체를 구성해 반환하는 대신 그에 대한 대행 객체(proxy)를 반환해서, 실제 결과 컬렉션의 원소를 요청받았을 때에만 이를 만들어내도록 하는 방법이다.
 
-As an example of a non-strict transformer consider the following implementation of a lazy map operation:
+바로 계산하지 않는 변환메소드의 예로 아래 지연계산 맵 연산을 살펴보자.
 
     def lazyMap[T, U](coll: Iterable[T], f: T => U) = new Iterable[T] {
       def iterator = coll.iterator map f
     }
 
-Note that `lazyMap` constructs a new `Iterable` without stepping through all elements of the given collection `coll`. The given function `f` is instead applied to the elements of the new collection's `iterator` as they are demanded.
+`lazyMap`이 인자로 받은 `coll`의 모든 원소를 하나하나 읽지 않고 새 `Iterable`을 반환한다는 사실에 유의하라. 주어진 함수 `f`는 요청에 따라 새 컬렉션의 `iterator`에 적용된다.
 
-Scala collections are by default strict in all their transformers, except for `Stream`, which implements all its transformer methods lazily. However, there is a systematic way to turn every collection into a lazy one and _vice versa_, which is based on collection views. A _view_ is a special kind of collection that represents some base collection, but implements all transformers lazily.
+`Stream`을 제외한 스칼라의 컬렉션에 있는 변환메소드는 기본적으로 바로 계산하는 방식을 택한다. 스트림은 모든 변환 메소드가 지연계산으로 되어 있다. 하지만, 모든 컬렉션을 지연 계산 방식의 컬렉션으로 바꾸거나 그 _역으로_ 바꾸는 구조적인 방법이 있다. 그 방법은 바로 컬렉션 뷰를 활용하는 것이다. _뷰(view)_ 는 어떤 기반 컬렉션을 대표하되 모든 변환메소드를 지연계산으로 구현하는 특별한 종류의 컬렉션이다.
 
+컬렉션에서 그 뷰로 변환하려면 해당 컬렉션의 `view` 메소드를 사용하면 된다. 
 To go from a collection to its view, you can use the view method on the collection. If `xs` is some collection, then `xs.view` is the same collection, but with all transformers implemented lazily. To get back from a view to a strict collection, you can use the `force` method.
 
 Let's see an example. Say you have a vector of Ints over which you want to map two functions in succession:
