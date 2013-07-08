@@ -1,6 +1,6 @@
 ---
 layout: overview-large
-title: Creating Collections From Scratch
+title: 컬렉션 만들기
 
 disqus: true
 
@@ -9,22 +9,24 @@ num: 16
 language: ko
 ---
 
-You have syntax `List(1, 2, 3)` to create a list of three integers and `Map('A' -> 1, 'C' -> 2)` to create a map with two bindings. This is actually a universal feature of Scala collections. You can take any collection name and follow it by a list of elements in parentheses. The result will be a new collection with the given elements. Here are some more examples:
+`List(1, 2, 3)` 구문을 사용해 3개의 정수로 이루어진 리스트를 만들 수 있고, `Map('A' -> 1, 'C' -> 2)`를 사용해 두 연관관계가 포함된 맵을 만들 수 있다. 이는 스칼라 컬렉션에서 일반적인 기능이다. 어떤 컬렉션이든 이름뒤에 괄호를 붙이고, 원소 목록을 넣을 수 있다. 그러면 해당 원소들을 포함한 새로운 컬렉션을 만들 수 있다. 다음은 그 예이다.
 
-    Traversable()             // An empty traversable object
-    List()                    // The empty list
-    List(1.0, 2.0)            // A list with elements 1.0, 2.0
-    Vector(1.0, 2.0)          // A vector with elements 1.0, 2.0
-    Iterator(1, 2, 3)         // An iterator returning three integers.
-    Set(dog, cat, bird)       // A set of three animals
-    HashSet(dog, cat, bird)   // A hash set of the same animals
-    Map(a -> 7, 'b' -> 0)     // A map from characters to integers
+    Traversable()             // 빈 순회가능 객체
+    List()                    // 빈 리스트
+    List(1.0, 2.0)            // 1.0, 2.0이 원소인 리스트
+    Vector(1.0, 2.0)          // 1.0, 2.0이 원소인 벡터
+    Iterator(1, 2, 3)         // 3개의 정수를 반환하는 반복자
+    Set(dog, cat, bird)       // 세 동물의 집합
+    HashSet(dog, cat, bird)   // 세 동물의 해시집합
+    Map(a -> 7, 'b' -> 0)     // 문자에서 정수로 연관시켜주는 맵
 
-"Under the covers" each of the above lines is a call to the `apply` method of some object. For instance, the third line above expands to
+위 각 식은 내부적으로 어떤 객체의 `apply` 메소드를 호출한다. 예를 들어 세번째 줄은 다음과 같이 펼칠 수 있다.
 
     List.apply(1.0, 2.0)
 
-So this is a call to the `apply` method of the companion object of the `List` class. That method takes an arbitrary number of arguments an constructs a list from them. Every collection class in the Scala library has a companion object with such an `apply` method. It does not matter whether the collection class represents a concrete implementation, like `List`, or `Stream` or `Vector`, do, or whether it is an abstract base class such as `Seq`, `Set` or `Traversable`. In the latter case, calling apply will produce some default implementation of the abstract base class. Examples:
+따라서 이는 `List`의 짝 객체의 `apply`를 호출하는 것이다. 그 메소드는 임의의 갯수의 인자를 받아서 리스트를 만든다. 스칼라의 모든 컬렉션 클래스에는 이러한 `apply` 메소드가 정의된 짝 객체가 존재한다. 해당 컬렉션 클래스가 `List`, `Stream`, `Vector`등과 같이 구체적인 구현을 나타내고 있는지 `Seq`, `Set`, `Traversable`등 추상적인 것인지와 관계 없이 짝 객체는 존재한다.
+
+후자의 경우 `apply`를 호출하면 추상 기반 클래스의 기본 구현으로 되어 있는 타입의 객체가 만들어진다. 예를 들면 다음과 같다.
 
     scala> List(1, 2, 3)
     res17: List[Int] = List(1, 2, 3)
@@ -33,26 +35,29 @@ So this is a call to the `apply` method of the companion object of the `List` cl
     scala> mutable.Traversable(1, 2, 3)
     res19: scala.collection.mutable.Traversable[Int] = ArrayBuffer(1, 2, 3)
 
-Besides `apply`, every collection companion object also defines a member `empty`, which returns an empty collection. So instead of `List()` you could write `List.empty`, instead of `Map()`, `Map.empty`, and so on.
+모든 컬렉션 짝 객체는 `apply` 외에도 비어있는 컬렉션을 반환하는 필드 `empty`가 정의되어 있다. 따라서 `List()` 대신 `List.empty`를, `Map()` 대신 `Map.empty`를 쓸 수 있다.
 
-Descendants of `Seq` classes provide also other factory operations in their companion objects. These are summarized in the following table. In short, there's
+`Seq`를 상속한 클래스들은 또한 짝 객체에 다른 팩토리 연산도 제공한다. 이들은 다음 표에 정리되어 있다. 간단히 설명하자면, 
 
-* `concat`, which concatenates an arbitrary number of traversables together,
-* `fill` and `tabulate`, which generate single or multi-dimensional sequences of given dimensions initialized by some expression or tabulating function,
-* `range`, which generates integer sequences with some constant step length, and
-* `iterate`, which generates the sequence resulting from repeated application of a function to a start element.
+* `concat`은 임의의 갯수의 순회가능 객체들을 서로 연결한다.
+* `fill`과 `tabulate`는 주어진 식이나 채워넣기 함수에 의해 초기화된 다차원 열(1차원 포함)을 만들어낸다.
+* `range`는 주어진 범위와 증분값에 따라 정수 열을 만들어낸다.
+* `iterate`는 어떤 함수를 시작 원소에 반복적용해서 나오는 결과값의 열을 만들어낸다.
 
-### Factory Methods for Sequences
+### 열의 팩토리 메소드
 
-| WHAT IT IS  	  	        | WHAT IT DOES				     |
+| 사용법  	  	        | 하는일				     |
 | ------       	       	    | ------					     |
-|  `S.empty`         	    | The empty sequence. |
-|  `S(x, y, z)`      	    | A sequence consisting of elements `x, y, z`. |
-|  `S.concat(xs, ys, zs)`   | The sequence obtained by concatenating the elements of `xs, ys, zs`. |
-|  `S.fill(n){e}`      	    | A sequence of length `n` where each element is computed by expression `e`. |
-|  `S.fill(m, n){e}`        | A sequence of sequences of dimension `m×n` where each element is computed by expression `e`. (exists also in higher dimensions). |
-|  `S.tabulate(n){f}`       | A sequence of length `n` where the element at each index i is computed by `f(i)`. |
-|  `S.tabulate(m, n){f}`    | A sequence of sequences of dimension `m×n` where the element at each index `(i, j)` is computed by `f(i, j)`. (exists also in higher dimensions). |
-|  `S.range(start, end)`    | The sequence of integers `start` ... `end-1`. |
-|  `S.range(start, end, step)`| The sequence of integers starting with `start` and progressing by `step` increments up to, and excluding, the `end` value. |
-|  `S.iterate(x, n)(f)`     | The sequence of length `n` with elements `x`, `f(x)`, `f(f(x))`, ... |
+|  `S.empty`         	    | 빈 열을 반환한다. |
+|  `S(x, y, z)`      	    | 원소 `x, y, z`로 이루어진 열을 반환한다. |
+|  `S.concat(xs, ys, zs)`   | `xs, ys, zs` 세 열의 원소들로 이루어진 열을 반환한다. |
+|  `S.fill(n){e}`      	    | 각 원소가 식 `e`에 의해 계산된 길이 `n`짜리 열을 반환한다. |
+|  `S.fill(m, n){e}`        | 각 원소가 식 `e`에 의해 계산된 `m×n` 크기의 2차원 열을 반환한다(더 고차원에 대해서도 정의되어 있다). |
+|  `S.tabulate(n){f}`       | 첨자 `i`번째에 있는 원소가 `f(i)`에 의해 계산된 길이 `n`짜리 열을 반환한다. |
+|  `S.tabulate(m, n){f}`    | 첨자 `(i, j)`번째에 있는 원소가 `f(i, j)`에 의해 계산된 `mxn`크기의 2차원 열을 반환한다(더 고차원에 대해서도 정의되어 있다). |
+|  `S.range(start, end)`    | 정수 `start` ... `end-1`의 열을 반환한다. |
+|  `S.range(start, end, step)`| `start`부터 시작해서 `step`을 증분으로 증가하고 `end`보다 작은 값으로 된 정수 열을 반환한다(end는 제외된다). |
+|  `S.iterate(x, n)(f)`     | `x`, `f(x)`, `f(f(x))`, ... 으로 이루어진 길이 n인 열을 반환한다. |
+
+
+
