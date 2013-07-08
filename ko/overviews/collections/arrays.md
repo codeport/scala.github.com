@@ -1,12 +1,12 @@
 ---
 layout: overview-large
-title: Arrays
+title: 배열
 
 disqus: true
 
 partof: collections
 num: 10
-languages: [ko]
+language: ko
 ---
 
 [배열(Array)](http://www.scala-lang.org/api/{{ site.scala-version }}/scala/Array.html)은 스칼라에 있는 특별한 종류의 컬렉션이다. 한편, 스칼라 배열은 자바의 배열과 일대일 대응한다. 즉, 스칼라 배열 `Array[Int]`는 자바의 `int[]`로 표현되며, `Array[Double]`은 자바의 `double[]`로, `Array[String]`은 `Java String[]`로 표현될 수 있다. 그러나 이와 동시에, 스칼라 배열은 자바 배열 유사체보다 훨씬 많은 것을 제공한다. 첫 번째로, 스칼라 배열은 **제너릭(Generic)** 할 수 있다. 이는 `Array[T]`를 사용할 수 있다는 의미이며, `T`는 타입 매개 변수나 추상 타입을 의미한다. 두 번째로, 스칼라 배열은 스칼라 시퀀스와 호환된다. `Seq[T]`가 필요할 때, `Array[T]`를 전달할 수 있다는 것을 의미한다. 마지막으로, 스칼라 배열은 모든 시퀀스 연산을 지원한다. 직접 예시를 통해서 알아보자:
@@ -31,7 +31,7 @@ languages: [ko]
     scala> a1 eq a4
     res2: Boolean = true
 
-위의 상호작용은 배열에서 `WrappedArray`로의 암시적인 변환이 있기 때문에, 배열이 시퀀스와 호환되는 것을 보여준다.  `WrappedArray`에서 `배열`로 변환하기 위해서는, `Traversable`에 정의된 `toArray` 메소드를 사용할 수 있다. 마지막 REPL 줄에서 `toArray`를 통한 감싸고 풀어주는 변환이, 시작했던 배열과 동일한 것을 만들어주는 것을 볼 수 있다.
+위의 상호작용은 배열에서 `WrappedArray`로의 암시적인 변환이 있기 때문에, 배열이 시퀀스와 호환되는 것을 보여준다.  `WrappedArray`에서 `배열`로 변환하기 위해서는, `Traversable`에 정의된 `toArray` 메소드를 사용할 수 있다. 마지막 REPL 줄에서 `toArray`를 통한 감싸고 풀어주는 변환이, 시작했던 배열과 동일한 것을 만들어주는 것을 볼 수 있다. 
 
 배열에 적용되는 또 다른 암시적 변환이 존재한다. 이 변환은 모든 시퀀스 메소드를 배열에 "더하지만" 배열 자체를 시퀀스로 바꾸지 않는다. "더한다"는 것은 배열이 모든 시퀀스 메소드를 지원하는 `ArrayOps` 타입의 객체로 감싸진다는 것을 의미한다. 일반적으로, 이 `ArrayOps` 객체는 오래 가지 않는다; 보통 시퀀스 메소드가 불려진 후에는 접근할 수 없고, 메모리 공간은 재활용된다. 현대의 가상 머신은 종종 이러한 객체의 생성을 생략하기도 한다.
 
@@ -53,7 +53,7 @@ languages: [ko]
     scala> a1.reverse
     res4: Array[Int] = Array(3, 2, 1)
 
-`ArrayOps` 객체는 암시적 변환에 의해 자동으로 삽입된다. 따라서 윗줄은 아래와 동일하다.
+`ArrayOps` 객체는 암시적 변환에 의해 자동으로 삽입된다. 따라서 윗줄은 아래와 동일하다. 
 
     scala> intArrayOps(a1).reverse
     res5: Array[Int] = Array(3, 2, 1)
@@ -104,7 +104,7 @@ languages: [ko]
 양 쪽 모두, 스칼라 컴파일러가 자동으로 원소의 타입(`Int`와 `String`)에 대한 클래스 매니페스트를 생성하였고, `evenElems` 메소드의 암시적 매개 변수로 전달하였다. 컴파일러는 모든 구체적인 타입에 대해서 매니페스트를 생성해주지만, 인수 자체가 클래스 매니페스트 없는 타입 매개 변수일 경우에는 불가능하다. 예를 들어, 아래의 실패 사례를 살펴보자:
 
     scala> def wrap[U](xs: Array[U]) = evenElems(xs)
-    <console>:6: error: could not find implicit value for
+    <console>:6: error: could not find implicit value for 
      evidence parameter of type ClassManifest[U]
          def wrap[U](xs: Array[U]) = evenElems(xs)
                                           ^
@@ -116,3 +116,4 @@ languages: [ko]
 이 예시를 통해 `U`의 정의에 대한 문맥 범위가 `ClassManifest[U]` 타입의 `evidence$1`라는 이름의 암시적 매개 변수로 약칭한 것을 볼 수 있다.
 
 요약하면, 제너릭 배열의 생성은 클래스 매니페스트를 요구한다. 그러므로 타입 매개 변수 `T`의 배열을 생성할 때, `T`에 대한 암시적 클래스 매니페스트를 제공해주어야 한다. 이를 위한 가장 쉬운 방법은, `[T: ClassManifest]` 처럼 문맥 범위 안에 타입 매개 변수와 함께 `ClassManifest`를 선언해주는 것이다.
+

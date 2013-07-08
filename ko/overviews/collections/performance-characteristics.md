@@ -1,6 +1,6 @@
 ---
 layout: overview-large
-title: Performance Characteristics
+title: 성능 특성
 
 disqus: true
 
@@ -9,9 +9,9 @@ num: 12
 language: ko
 ---
 
-The previous explanations have made it clear that different collection types have different performance characteristics. That's often the primary reason for picking one collection type over another. You can see the performance characteristics of some common operations on collections summarized in the following two tables.
+앞의 설명에서 다른 종류의 콜렉션은 다른 성능 특성(performance characteristics)을 지니는 것을 알 수 있다. 이러한 성능 특성은 여러 콜렉션 가운데 하나를 선택하는 주요 기준이 된다. 아래의 두 개의 표에서 콜렉션들의 공통된 연산들의 성능 특성을 요약하였다.
 
-Performance characteristics of sequence types:
+시퀀스 타입의 성능 특성:
 
 |               | head | tail | apply | update| prepend | append | insert |
 | --------      | ---- | ---- | ----  | ----  | ----    | ----   | ----   |
@@ -34,7 +34,7 @@ Performance characteristics of sequence types:
 | `ArrayStack`  | C    | L    | C     | C     |  aC     | L      |  L     |
 | `Array`       | C    | L    | C     | C     |  -      | -      |  -     |
 
-Performance characteristics of set and map types:
+집합과 맵의 성능 특성:
 
 |                    | lookup | add | remove | min           |
 | --------           | ----   | ---- | ----  | ----          |
@@ -49,37 +49,37 @@ Performance characteristics of set and map types:
 | `BitSet`           | C      | aC   | C     | eC<sup>1</sup>|
 | `TreeSet`          | Log    | Log  | Log   | Log           |
 
-Footnote: <sup>1</sup> Assuming bits are densely packed.
+각주: <sup>1</sup> 비트들이 밀집해서 담겨있다고 전제한다.
 
-The entries in these two tables are explained as follows:
+두 표의 각 요소는 아래의 의미를 가진다:
 
 |     |                                           |
 | --- | ----                                      |
-| **C**   | The operation takes (fast) constant time. |
-| **eC**  | The operation takes effectively constant time, but this might depend on some assumptions such as maximum length of a vector or distribution of hash keys.|
-| **aC**  | The operation takes amortized constant time. Some invocations of the operation might take longer, but if many operations are performed on average only constant time per operation is taken. |
-| **Log** | The operation takes time proportional to the logarithm of the collection size. |
-| **L**   | The operation is linear, that is it takes time proportional to the collection size. |
-| **-**   | The operation is not supported. |
+| **C**   | 연산에 (빠른) 상수 시간이 소요된다 |
+| **eC**  | 연산에 실질적으로 상수 시간이 소요되지만, 벡터의 최대 길이나 해시 키의 분포등의 전제에 의존한다.|
+| **aC**  | 평균적으로 상수 시간이 소요된다. 연산의 호출이 떄때로 더 긴 시간이 걸릴 때도 있지만, 여러 번의 연산 소요 시간을 평균내면 한 연산 당 상수 시간이 소요된다.|
+| **Log** | 연산 소요 시간이 콜렉션 크기의 로그 연산에 비례한다.|
+| **L**   | 연산에 선형 시간이 소요되며, 콜렉션 크기에 비례한다.|
+| **-**   | 연산이 지원되지 않는다.|
 
-The first table treats sequence types--both immutable and mutable--with the following operations:
-
-|     |                                                     |
-| --- | ----                                                |
-| **head**   | Selecting the first element of the sequence. |
-| **tail**   | Producing a new sequence that consists of all elements except the first one. |
-| **apply**  | Indexing. |
-| **update** | Functional update (with `updated`) for immutable sequences, side-effecting update (with `update` for mutable sequences. |
-| **prepend**| Adding an element to the front of the sequence. For immutable sequences, this produces a new sequence. For mutable sequences it modified the existing sequence. |
-| **append** | Adding an element and the end of the sequence. For immutable sequences, this produces a new sequence. For mutable sequences it modified the existing sequence. |
-| **insert** | Inserting an element at an arbitrary position in the sequence. This is only supported directly for mutable sequences. |
-
-The second table treats mutable and immutable sets and maps with the following operations:
+첫 번째 표는 시퀀스 타입(가변과 불변 모두)을 아래의 연산으로 사용하였다:
 
 |     |                                                     |
 | --- | ----                                                |
-| **lookup** | Testing whether an element is contained in set, or selecting a value associated with a key. |
-| **add**    | Adding a new element to a set or key/value pair to a map. |
-| **remove** | Removing an element from a set or a key from a map. |
-| **min**    | The smallest element of the set, or the smallest key of a map. |
+| **head**   | 시퀀스의 첫 번째 원소를 선택한다. |
+| **tail**   | 첫 번째 원소를 제외한 모든 원소를 포함하는 새로운 시퀀스를 생성한다.|
+| **apply**  | 인덱스 접근. |
+| **update** | 불변 시퀀스에서는 함수형 갱신(`updated`), 가변 시퀀스에는 사이드 이펙트 갱신 (`update`).|
+| **prepend**| 원소를 시퀀스 제일 앞에 추가한다. 불변 시퀀스에서는 새로운 시퀀스를 생성한다. 가변 시퀀스에서는 존재하는 시퀀스를 수정한다.|
+| **append** | 원소를 시퀀스 제일 뒤에 추가한다. 불변 시퀀스에서는 새로운 시퀀스를 생성한다. 가변 시퀀스에서는 존재하는 시퀀스를 수정한다.|
+| **insert** | 원소를 시퀀스의 임의 위치에 삽입한다. 가변 시퀀스에서만 지원된다.|
+
+두 번째 표는 가변, 불변 집합과 맵을 아래의 연산으로 사용하였다:
+
+|     |                                                     |
+| --- | ----                                                |
+| **lookup** | 원소가 집합에 포함되어있는지를 검사하거나, 키에 관련된 값을 선택한다.|
+| **add**    | 집합에 새로운 원소를 추가하거나, 맵에 키/값 쌍을 추가한다.|
+| **remove** | 집합에서 원소를 제거하거나, 맵에서 키를 삭제한다.|
+| **min**    | 집합의 가장 작은 원소나 맵의 가장 작은 키를 반환한다.|
 
