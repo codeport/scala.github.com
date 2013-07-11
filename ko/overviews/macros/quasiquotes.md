@@ -7,7 +7,7 @@ disqus: true
 partof: macros
 num: 4
 outof: 7
-languages: [ja, ko]
+language: ko]
 ---
 <a href="/overviews/macros/paradise.html"><span class="label important" style="float: right;">MACRO PARADISE</span></a>
 
