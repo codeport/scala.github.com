@@ -31,7 +31,7 @@ language: ko
 `scala.collection` 패키지의 컬렉션은 변경할 수 있을 수도 없을 수도 있다.
 예를 들어 [collection.IndexedSeq\[T\]](http://www.scala-lang.org/api/current/scala/collection/IndexedSeq.html)는
 [collection.immutable.IndexedSeq\[T\]](http://www.scala-lang.org/api/current/scala/collection/immutable/IndexedSeq.html)와
-[collection.mutable.IndexedSeq\[T\]](http://www.scala-lang.org/api/current/scala/collection/mutable/IndexedSeq.html) 모두의 슈퍼클래스이다. 일반적으로 `scala.collection`  패키지의 루트 컬렉션은
+[collection.mutable.IndexedSeq\[T\]](http://www.scala-lang.org/api/current/scala/collection/mutable/IndexedSeq.html) 모두의 수퍼클래스이다. 일반적으로 `scala.collection` 패키지의 루트 컬렉션은
 변경할 수 없는 컬렉션과 같은 인터페이스를 정의하고 `scala.collection.mutable`
 패키지의 변경할 수 있는 컬렉션은 이 변경할 수 없는 인터페이스에 부가작용을 하는
 수정작업이 추가되어 있다.
@@ -47,20 +47,13 @@ language: ko
 임포트한 기본 바인딩때문이다. 변경가능한 컬렉션을 사용하려면 명시적으로
 `collection.mutable.Set`나 `collection.mutable.Iterable`를 사용해야 한다.
 
-A useful convention if you want to use both mutable and immutable
-versions of collections is to import just the package
-`collection.mutable`.
 변경할 수 있는 컬렉션과 변경할 수 없는 컬렉션을 둘 다 사용할 때 유용한 관례는
 `collection.mutable` 패키지를 임포트하는 것이다.
 
     import scala.collection.mutable
 
-Then a word like `Set` without a prefix still refers to an an immutable collection,
-whereas `mutable.Set` refers to the mutable counterpart.
-이렇게 임포트한 뒤 접두사가 없는 `Set`은 변경할 수 없는 컬렉션을 계속 참조하고
-
-그 다음 접두사 없이 사용한 `Set`은 불변 컬렉션을 참조하고 `mutable.Set`은
-가변 컬렉션을 참조한다.
+이제 접두사 없이 사용한 `Set`이 여전히 불변 컬렉션을 참조하는 한편, `mutable.Set`은 가변
+컬렉션을 참조한다.
 
 컬렉션 계층에서 남은 패키지는 `collection.generic`이다. 이 패키지에는 컬렉션을 구현하는
 코드가 있다. 일반적으로 컬렉션 클래스는 클래스의 일부 작업의 구현을 `generic`의 클래스로
@@ -91,11 +84,11 @@ whereas `mutable.Set` refers to the mutable counterpart.
 다음 그림에는 `scala.collection.mutable` 패키지의 모든 컬렉션이 나와 있다.
 
 [<img src="{{ site.baseurl }}/resources/images/collections.mutable.png" width="550">]({{ site.baseurl }}/resources/images/collections.mutable.png)
-(이 세 그림은 decodified.com의 Matthias로 만들었다.)
+(이 세 그림은 decodified.com의 Mathias가 만들었다.)
 
 ## 컬렉션 API 살펴보기 ##
 
-위의 크림에 가장 중요한 컬렉션 클래스가 나와 있고 모든 클래스에 공통된 아주 약간의 특성이 있는데
+위의 그림에 가장 중요한 컬렉션 클래스가 나와 있고 모든 클래스에 공통된 아주 약간의 특성이 있는데
 예를 들면 모든 컬렉션을 컬렉션 클래스명뒤에 요소를 작성하는 형태의 일관된 문법으로 생성할 수 있다.
 
     Traversable(1, 2, 3)
