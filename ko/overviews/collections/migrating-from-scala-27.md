@@ -1,6 +1,6 @@
 ---
 layout: overview-large
-title: Migrating from Scala 2.7
+title: 스칼라 2.7로부터 포팅하기
 
 disqus: true
 
@@ -10,9 +10,9 @@ outof: 18
 language: ko
 ---
 
-Porting your existing Scala applications to use the new collections should be almost automatic. There are only a couple of possible issues to take care of.
+기본 스칼라 앱을 새 컬렉션에서 사용하기 위해 포팅하는 작업은 거의 자동으로 이루어져야만 한다. 주의해야 할 것은 두세가지 뿐이다.
 
-Generally, the old functionality of Scala 2.7 collections has been left in place. Some features have been deprecated, which means they will removed in some future release. You will get a _deprecation warning_ when you compile code that makes use of these features in Scala 2.8. In a few places deprecation was unfeasible, because the operation in question was retained in 2.8, but changed in meaning or performance characteristics. These cases will be flagged with _migration warnings_ when compiled under 2.8. To get full deprecation and migration warnings with suggestions how to change your code, pass the `-deprecation` and `-Xmigration` flags to `scalac` (note that `-Xmigration` is an extended option, so it starts with an `X`.) You can also pass the same options to the `scala` REPL to get the warnings in an interactive session. Example:
+일반적으로, 스칼라 2.7 컬렉션의 옛 기능은 그대로 남아있다. 몇몇 특징은 사용하지 않을 것이 권장되며, 향후 배포판에서는 제거될 수 있다. 스칼라 2.8에서 이러한 기능을 사용한다면 _사용금지 경고_를 보게될 것이다. 2.8에서도 그대로 사용되지만, 성능이나 의미는 변경되어 사용 금지를 표시하는 것이 바람직하지 않은 경우도 있다. 이런 경우에는 스칼라 2.8에서 _이전 경고(migration warning)_ 가 발생한다. 코드를 어떻게 바꿔야 할지 참고하기 위해 사용금지와 이전 경고를 모두 다 보고 싶다면 `-deprecation`와 `-Xmigration` 플래그를 `scalac`에 전달하라(`-Xmigration`는 확장 옵션이기 때문에 `X`로 시작한다는 점에 유의하라). `scala` REPL에 같은 플래그를 전달하면 대화식 세션에서도 다음과 같이 경고 메시지를 볼 수 있다.
 
     >scala -deprecation -Xmigration
     Welcome to Scala version 2.8.0.final
@@ -36,10 +36,10 @@ Generally, the old functionality of Scala 2.7 collections has been left in place
              ^
     res2: Iterable[Int] = Set(1, 3)
 
-There are two parts of the old libraries which have been replaced wholesale, and for which deprecation warnings were not feasible.
+예전 라이브러리에 있던 기능 전체가 다 변경되어서 금지 경고를 표시할 수 없는 경우로는 다음 두 가지가 있다.
 
-1. The previous `scala.collection.jcl` package is gone. This package tried to mimick some of the Java collection library design in Scala, but in doing so broke many symmetries. Most people who wanted Java collections bypassed `jcl` and used `java.util` directly. Scala 2.8 offers automatic conversion mechanisms between both collection libraries in the [JavaConversions]({{ site.baseurl }}/overviews/collections/conversions-between-java-and-scala-collections.md) object which replaces the `jcl` package.
-2. Projections have been generalized and cleaned up and are now available as views. It seems that projections were used rarely, so not much code should be affected by this change.
+1. 예전의 `scala.collection.jcl` 패키지는 삭제되었다. 이 패키지는 자바 컬렉션 라이브러리 설계를 스칼라에서 일부 흉내내기 위한 시도였다. 하지만, 그로 인해 많은 대칭성이 깨져 버렸다. 대부분의 경우 자바 컬렉션을 원하는 프로그래머들은 `jcl`을 거치지 않고 바로 `java.util`을 사용했다. 스칼라 2.8에서는 `jcl` 패키지를 대치하는 [자바변환(JavaConversions)]({{ site.baseurl }}/overviews/collections/conversions-between-java-and-scala-collections.md) 객체를 사용한 스칼라와 자바 컬렉션간의 자동 변환이 제공된다.
+2. 프로젝션(Projection)은 더 일반화되고 다듬어져서 이제 뷰로 제공된다. 프로젝션을 사용하는 경우가 그리 많지 았았던 것 같으므로, 이 변경에 영향받는 경우도 적을 것이다.
 
-So, if your code uses either `jcl` or projections there might be some minor rewriting to do.
+따라서 여러분이 작성한 코드가 `jcl`이나 프로젝션을 사용한다면 코드를 조금은 다시 작성할 필요가 있다.
 
